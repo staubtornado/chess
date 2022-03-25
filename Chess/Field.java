@@ -2,13 +2,15 @@ package Chess;
 
 public class Field {
     private Figure figure;
-    private int x;
-    private int y;
+    private final int y;
 
-    public Field(Figure figure, int x, int y) {
+    public Field(Figure figure, int y) {
         this.figure = figure;
-        this.x = x;
         this.y = y;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public Figure getFigure() {

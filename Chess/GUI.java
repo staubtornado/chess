@@ -1,9 +1,6 @@
 package Chess;
 
 public class GUI {
-    private final String[] whiteRow = {"⬛", "⬜", "⬛", "⬜", "⬛", "⬜", "⬛", "⬜"};
-    private final String[] blackRow = {"⬜", "⬛", "⬜", "⬛", "⬜", "⬛", "⬜", "⬛"};
-
     public void sendGui(Player[] players, Field[] fields) {
         for (int i = 0; i < 50; i++) {
             System.out.println();
@@ -39,6 +36,7 @@ public class GUI {
         for (int i = 1; i < 9; i++) {
             System.out.print(" " + i + "  ");
         }
+        System.out.println();
         System.out.println();
     }
 }

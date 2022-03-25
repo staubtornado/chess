@@ -13,9 +13,9 @@ public class Game {
     public Game() {
         for (int i = 0; i < players.length; i++) {
             System.out.println("Please enter the name of player " + (i + 1) + ".");
-            players[i] = new Player(scanner.nextLine(), i);
+            players[i] = new Player(scanner.nextLine());
         }
-        turn = players[0];
+        turn = players[1];
         gui = new GUI();
 
         int x = 0;
@@ -36,7 +36,7 @@ public class Game {
             if (x == 4 && y == 0) {figure = new Figure("King", "♔", players[0]);}
             if (x == 4 && y == 7) {figure = new Figure("King", "♚", players[1]);}
 
-            fields[i] = new Field(figure, x, y);
+            fields[i] = new Field(figure, y);
             x += 1;
             if (x > 7) {x = 0;}
         }
@@ -73,12 +73,13 @@ public class Game {
                     destinationField = null;
                 }
 
-            } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException | NullPointerException e) {
                 System.out.println("Invalid Field! Try again!");
                 destinationField = null;
             }
         }
         destinationField.setFigure(originField.getFigure());
+        destinationField.getFigure().onMove(destinationField);
         originField.setFigure(null);
     }
 
@@ -86,9 +87,10 @@ public class Game {
         gui.sendGui(players, fields);
 
         while (true) {
+            try {
             nextTurn();
             if (turn == players[0]) {turn = players[1];} else {turn = players[0];}
             gui.sendGui(players, fields);
-        }
+        } catch (Exception e) {e.printStackTrace(); break;}}
     }
 }
