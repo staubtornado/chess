@@ -1,6 +1,8 @@
-package Chess;
+package chess;
 
 import java.util.Scanner;
+
+import static chess.GameLogic.*;
 
 public class Game {
     private final Player[] players = new Player[2];
@@ -13,7 +15,7 @@ public class Game {
     public Game() {
         for (int i = 0; i < players.length; i++) {
             System.out.println("Please enter the name of player " + (i + 1) + ".");
-            players[i] = new Player(scanner.nextLine());
+            players[i] = new Player(scanner.nextLine(), i);
         }
         turn = players[1];
         gui = new GUI();
@@ -36,14 +38,10 @@ public class Game {
             if (x == 4 && y == 0) {figure = new Figure("King", "♔", players[0]);}
             if (x == 4 && y == 7) {figure = new Figure("King", "♚", players[1]);}
 
-            fields[i] = new Field(figure, y);
+            fields[i] = new Field(figure, x, y);
             x += 1;
             if (x > 7) {x = 0;}
         }
-    }
-
-    private Field getField(int x, int y) {
-        return fields[((y - 1) * 8) + 8 - x];
     }
 
     private void nextTurn() {
@@ -62,8 +60,8 @@ public class Game {
                         index++;
                     }
                 }
-                originField = getField(Integer.parseInt(input[0]), Integer.parseInt(input[1]));
-                destinationField = getField(Integer.parseInt(input[2]), Integer.parseInt(input[3]));
+                originField = getFieldByCoordinates(fields, Integer.parseInt(input[0]), Integer.parseInt(input[1]));
+                destinationField = getFieldByCoordinates(fields, Integer.parseInt(input[2]), Integer.parseInt(input[3]));
 
                 boolean invalid = originField.getFigure().getPlayer() != turn;
                 if (originField == destinationField) {invalid = true;}
@@ -71,13 +69,21 @@ public class Game {
                 if (invalid) {
                     System.out.println("Invalid turn! Try again!");
                     destinationField = null;
+                    continue;
                 }
 
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException | NullPointerException e) {
-                System.out.println("Invalid Field! Try again!");
+                System.out.println("Invalid field! Try again!");
+                destinationField = null;
+                continue;
+            }
+            if (!moveIsValid(originField, destinationField)) {
+                System.out.println("Invalid move! Try again!");
                 destinationField = null;
             }
+
         }
+
         destinationField.setFigure(originField.getFigure());
         destinationField.getFigure().onMove(destinationField);
         originField.setFigure(null);
@@ -89,6 +95,7 @@ public class Game {
         while (true) {
             try {
             nextTurn();
+            checkMate(fields, turn);
             if (turn == players[0]) {turn = players[1];} else {turn = players[0];}
             gui.sendGui(players, fields);
         } catch (Exception e) {e.printStackTrace(); break;}}
